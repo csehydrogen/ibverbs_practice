@@ -17,10 +17,10 @@ int main(int argc, char** argv) {
    * 1. Set hint.ai_flags to RAI_PASSIVE
    * 2. Pass NULL to name
    */
-  rdma_addrinfo hint = {
-    .ai_flags = RAI_PASSIVE,
-    .ai_port_space = RDMA_PS_TCP,
-  };
+  rdma_addrinfo hint;
+  memset(&hint, 0, sizeof(hint));
+  hint.ai_flags = RAI_PASSIVE;
+  hint.ai_port_space = RDMA_PS_TCP;
   rdma_addrinfo* addrinfo;
   CHECK_INT(rdma_getaddrinfo(NULL, port, &hint, &addrinfo));
 
@@ -28,15 +28,13 @@ int main(int argc, char** argv) {
    * Create CM ID for listening.
    * QP attributes are saved and will be used for each accepted CM ID.
    */
-  ibv_qp_init_attr qp_init_attr = {
-    .cap = {
-      .max_send_wr = 1,
-      .max_recv_wr = 1,
-      .max_send_sge = 1,
-      .max_recv_sge = 1
-    },
-    .sq_sig_all = 1
-  };
+  ibv_qp_init_attr qp_init_attr;
+  memset(&qp_init_attr, 0, sizeof(qp_init_attr));
+  qp_init_attr.cap.max_send_wr = 1;
+  qp_init_attr.cap.max_recv_wr = 1;
+  qp_init_attr.cap.max_send_sge = 1;
+  qp_init_attr.cap.max_recv_sge = 1;
+  qp_init_attr.sq_sig_all = 1;
   rdma_cm_id* listen_id;
   CHECK_INT(rdma_create_ep(&listen_id, addrinfo, NULL, &qp_init_attr));
   rdma_freeaddrinfo(addrinfo);

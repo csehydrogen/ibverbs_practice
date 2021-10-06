@@ -16,24 +16,22 @@ int main(int argc, char** argv) {
   /*
    * Setup address info.
    */
-  rdma_addrinfo hint = {
-    .ai_port_space = RDMA_PS_TCP
-  };
+  rdma_addrinfo hint;
+  memset(&hint, 0, sizeof(hint));
+  hint.ai_port_space = RDMA_PS_TCP;
   rdma_addrinfo* addrinfo;
   CHECK_INT(rdma_getaddrinfo(addr, port, &hint, &addrinfo));
 
   /*
    * Create CM ID with QP attributes.
    */
-  ibv_qp_init_attr qp_init_attr = {
-    .cap = {
-      .max_send_wr = 1,
-      .max_recv_wr = 1,
-      .max_send_sge = 1,
-      .max_recv_sge = 1
-    },
-    .sq_sig_all = 1
-  };
+  ibv_qp_init_attr qp_init_attr;
+  memset(&qp_init_attr, 0, sizeof(qp_init_attr));
+  qp_init_attr.cap.max_send_wr = 1;
+  qp_init_attr.cap.max_recv_wr = 1;
+  qp_init_attr.cap.max_send_sge = 1;
+  qp_init_attr.cap.max_recv_sge = 1;
+  qp_init_attr.sq_sig_all = 1;
   rdma_cm_id* id;
   CHECK_INT(rdma_create_ep(&id, addrinfo, NULL, &qp_init_attr));
   rdma_freeaddrinfo(addrinfo);
