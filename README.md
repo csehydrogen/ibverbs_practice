@@ -88,6 +88,15 @@ rdmacm is a slightly higher-level API than ibverbs.
     * Server: `rdma_post_recv` - `rdma_accept` - (`rdma_get_recv_comp` - `rdma_post_recv` - `rdma_post_send` - `rdma_get_send_comp`)+
     * Client: `rdma_connect` - (`rdma_post_recv` - `rdma_post_send` - `rdma_get_send_comp` - `rdma_get_recv_comp`)+
 
+### Scenario
+
+IB programming is already hard. What makes it harder is that there are multiple ways to do the same job. I've seen several flows using those APIs.
+
+1. Like the previous section, obtain a connection (QP) using `rdma_getaddrinfo` and `rdma_create_ep`, and use RDMA Verbs APIs with `rdma_cm_id` to communicate.
+2. Utilize RDMA CM APIs to bind to NICs by address(`rdma_create_id` and `rdma_bind_addr` along with `getaddrinfo`). Now, `rdma_cm_id::verbs` contains valid `ibv_context`. Use the context to do your jobs with VPI Verbs APIs.
+3. Use `ibv_get_device_list` and `ibv_open_device` to get `ibv_context`. Use VPI Verbs APIs.
+4. There are more...
+
 ## Running Tests
 
 ```bash
